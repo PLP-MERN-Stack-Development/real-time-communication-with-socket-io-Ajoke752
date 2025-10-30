@@ -5,73 +5,142 @@ This assignment focuses on building a real-time chat application using Socket.io
 ## Assignment Overview
 
 You will build a chat application with the following features:
-1. Real-time messaging using Socket.io
-2. User authentication and presence
-3. Multiple chat rooms or private messaging
-4. Real-time notifications
-5. Advanced features like typing indicators and read receipts
 
-## Project Structure
+# Real-Time Chat Application — Socket.io + React
 
+This repository is a fully working demonstration of a real-time chat application built with Socket.io on the server side and a React front-end. It was created as a learning project and includes a set of production-minded features while keeping the code approachable and easy to extend.
+
+## Table of contents
+
+- Project overview
+- Features implemented
+- Architecture and data flow
+- Local setup and run instructions
+- Environment variables
+- Usage notes and end-user flows
+- Design decisions and limitations
+- Next steps and deployment suggestions
+- Contributing
+- License
+
+## Project overview
+
+The application enables multiple clients to communicate in real time via a Node.js server using Socket.io. Users can join with a display name, participate in a global chat room, send direct (private) messages, share images, react to messages, and see typing indicators and presence updates.
+
+This repository contains both the server and client code so you can run the whole system locally for development or demonstration purposes.
+
+## Features implemented
+
+- Global broadcast messaging (all connected users)
+- Username-based join / simple authentication flow
+- Presence (online users list) and join/leave notifications
+- Typing indicators (live 'user is typing' state)
+- Private/direct messages between users
+- File/image sharing (base64 for demo purposes)
+- Read receipts (clients report visible messages)
+- Message reactions (emoji reactions)
+- Message delivery acknowledgement support (server-side callback)
+- Room join/leave notifications and basic room support
+- Browser notifications and optional sound notifications
+- Basic reconnection support via Socket.io client options
+
+At least three advanced features (private messaging, image sharing, read receipts/reactions) are implemented to satisfy the assignment's requirements.
+
+## Architecture and data flow
+
+- Server: `server/server.js`
+
+  - Express.js application that also creates an HTTP server and mounts Socket.io.
+  - Socket.io handles real-time events (user join, message send, private messages, typing, reactions, etc.).
+  - In-memory stores for connected users, messages, and typing state are used for simplicity.
+
+- Client: `client/` (React + Vite)
+  - `client/src/socket/socket.js` exposes a preconfigured Socket.io client and a `useSocket` hook to centralize event handling.
+  - React components provide the UI for login, chat, users list, message list, and message input.
+
+Typical flow
+
+- Client connects and emits `user_join` with a username.
+- When a message is sent the client emits `send_message`; the server appends metadata (id, timestamp, sender) and emits `receive_message` to all clients.
+- For private messages, the client emits `private_message` with the target socket id and the server routes the message accordingly.
+
+## Local setup and run instructions
+
+Prerequisites
+
+- Node.js v18+ (or current LTS)
+- npm (or yarn)
+
+Start the server
+
+```powershell
+cd server
+npm install
+npm run start
 ```
-socketio-chat/
-├── client/                 # React front-end
-│   ├── public/             # Static files
-│   ├── src/                # React source code
-│   │   ├── components/     # UI components
-│   │   ├── context/        # React context providers
-│   │   ├── hooks/          # Custom React hooks
-│   │   ├── pages/          # Page components
-│   │   ├── socket/         # Socket.io client setup
-│   │   └── App.jsx         # Main application component
-│   └── package.json        # Client dependencies
-├── server/                 # Node.js back-end
-│   ├── config/             # Configuration files
-│   ├── controllers/        # Socket event handlers
-│   ├── models/             # Data models
-│   ├── socket/             # Socket.io server setup
-│   ├── utils/              # Utility functions
-│   ├── server.js           # Main server file
-│   └── package.json        # Server dependencies
-└── README.md               # Project documentation
+
+Start the client (in a separate terminal)
+
+```powershell
+cd client
+npm install
+npm run dev
 ```
 
-## Getting Started
+Open the client at http://localhost:5173. The server runs at http://localhost:5000 by default.
 
-1. Accept the GitHub Classroom assignment invitation
-2. Clone your personal repository that was created by GitHub Classroom
-3. Follow the setup instructions in the `Week5-Assignment.md` file
-4. Complete the tasks outlined in the assignment
+If you prefer, run both servers in separate terminals or use a process manager to run them together.
 
-## Files Included
+## Environment variables
 
-- `Week5-Assignment.md`: Detailed assignment instructions
-- Starter code for both client and server:
-  - Basic project structure
-  - Socket.io configuration templates
-  - Sample components for the chat interface
+- See `.env.example` for recommended environment variables.
+- Important values:
+  - `PORT` — the server port (default 5000).
+  - `VITE_SOCKET_URL` — client-side variable for Socket.io host (e.g. `http://localhost:5000`). Vite requires client variables to be prefixed with `VITE_`.
 
-## Requirements
+## Usage notes and workflows
 
-- Node.js (v18 or higher)
-- npm or yarn
-- Modern web browser
-- Basic understanding of React and Express
+- Login: enter a display name in the client to join the chat.
+- Global chat: send messages to broadcast to all users.
+- Direct messages: select a user from the online list to send a private message.
+- Typing indicator: the UI will show when other users are typing.
+- Images: attach an image in the input; it is uploaded as a base64 payload for prototyping.
+- Read receipts: messages that are visible to the user will trigger `message_read` events so senders can mark messages as read.
 
-## Submission
+## Design decisions and limitations
 
-Your work will be automatically submitted when you push to your GitHub Classroom repository. Make sure to:
+- In-memory storage: chosen for simplicity in a demo project. Use a database (MongoDB/Postgres) or Redis for production.
+- Images as base64: convenient for small demos but not efficient for production. Use a storage service and serve image URLs for larger files.
+- Authentication: simple username-based onboarding. Replace with JWT/OAuth for real products.
+- Security: basic CORS setup included. Add validation, sanitization, and rate limiting for a public deployment.
 
-1. Complete both the client and server portions of the application
-2. Implement the core chat functionality
-3. Add at least 3 advanced features
-4. Document your setup process and features in the README.md
-5. Include screenshots or GIFs of your working application
-6. Optional: Deploy your application and add the URLs to your README.md
+## Next steps and deployment suggestions
 
-## Resources
+- Persist messages and user state (database + Redis for presence)
+- Move file uploads to a dedicated upload pipeline (S3 / Cloud Storage)
+- Add authentication and authorization (JWT, refresh tokens)
+- Add pagination for chat history and search
+- Harden security (helmet, rate limiting, input sanitization)
+- Deploy: host the server on Render / Railway / Heroku (or containerize) and host the client on Vercel/Netlify.
 
-- [Socket.io Documentation](https://socket.io/docs/v4/)
-- [React Documentation](https://react.dev/)
-- [Express.js Documentation](https://expressjs.com/)
-- [Building a Chat Application with Socket.io](https://socket.io/get-started/chat) 
+## Contributing
+
+Contributions are welcome. To contribute:
+
+1. Fork the repository and create a feature branch.
+2. Implement changes and add tests where applicable.
+3. Submit a pull request with a clear description.
+
+## License
+
+This repository does not include a license file by default. Add a license (MIT, Apache-2.0, etc.) if you plan to open-source.
+
+---
+
+If you'd like, I can add:
+
+- Example socket event payloads and API reference
+- Screenshots or GIFs from a local run
+- Troubleshooting section for common startup errors
+
+Tell me what you prefer and I will update the README accordingly.
