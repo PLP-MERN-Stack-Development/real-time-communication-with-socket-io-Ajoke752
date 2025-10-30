@@ -132,15 +132,3 @@ Contributions are welcome. To contribute:
 3. Submit a pull request with a clear description.
 
 ## License
-
-This repository does not include a license file by default. Add a license (MIT, Apache-2.0, etc.) if you plan to open-source.
-
----
-
-If you'd like, I can add:
-
-- Example socket event payloads and API reference
-- Screenshots or GIFs from a local run
-- Troubleshooting section for common startup errors
-
-Tell me what you prefer and I will update the README accordingly.
