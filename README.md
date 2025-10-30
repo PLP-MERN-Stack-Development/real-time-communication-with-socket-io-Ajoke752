@@ -2,10 +2,6 @@
 
 This assignment focuses on building a real-time chat application using Socket.io, implementing bidirectional communication between clients and server.
 
-## Assignment Overview
-
-You will build a chat application with the following features:
-
 # Real-Time Chat Application — Socket.io + React
 
 This repository is a fully working demonstration of a real-time chat application built with Socket.io on the server side and a React front-end. It was created as a learning project and includes a set of production-minded features while keeping the code approachable and easy to extend.
